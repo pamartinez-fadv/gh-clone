@@ -1,0 +1,22 @@
+name: PR
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches: [main]
+
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: PR Build
+    uses: FA-Switch-Platform/CICD/.github/workflows/pr.yml@v2.2
+    with:
+      event_type: ${{ github.event_name }}
+      artifactName: ${{ github.event.repository.name }}
+      repository: ${{ github.repository }}
+## if language == c#
+    #  additionalDotnetCommands: '' ## optional - for dotnet projects only
+    secrets: inherit

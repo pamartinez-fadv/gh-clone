@@ -1,0 +1,18 @@
+name: CI 
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: CI
+    uses: FA-Switch-Platform/CICD/.github/workflows/ci-afa.yml@v2.2
+    with:
+      artifactName: ${{ github.event.repository.name }}
+      repository:  ${{ github.repository }}
+      azure_deployment: ${{ github.event.repository.name }}
+      autoDeployDev: 'false'    ### optional: set to 'true' after you have dev env deployed first time
+    secrets: inherit

@@ -1,0 +1,26 @@
+name: Create Github Release
+run-name: Release ${{inputs.release_ver}} 
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ver:
+        description: Target release version in form "X.Y.Z-[pre-release]".
+        required: true
+        type: string
+      release_commit:
+        description: "Commit sha for build"
+        required: true
+        type: string
+
+jobs:
+  package_release:
+    name: createRelease
+    uses: FA-Switch-Platform/CICD/.github/workflows/release.yml@v2.2
+    with:
+      artifactName: ${{ github.event.repository.name }}
+      repo:  ${{ github.repository }}
+      release_ver: ${{ inputs.release_ver }}
+      sha: ${{ inputs.release_commit }}
+      isContainer: false   ## set to true if container app
+    secrets: inherit

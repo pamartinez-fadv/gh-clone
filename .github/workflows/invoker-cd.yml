@@ -1,0 +1,56 @@
+name: CD 
+run-name: Deploy ${{inputs.versions}} to ${{inputs.environmentName}}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environmentName: 
+        description: 'Environment name'
+        required: true
+        type: choice
+        options:
+          - 'dev01'
+          - 'qa01' 
+          - 'uat01'
+          - 'prod01'
+        default: 'dev01'
+      deploy_type:
+        description: 'Deploy Type - for more information see https://github.com/FA-Switch-Platform/CICD/blob/main/OnBoarding.md#cd-deploy-options'
+        type: choice
+        required: true
+        options:
+          - 'app_only'
+          - 'app_and_apim' 
+          - 'env_bicep_only'
+          - 'apim_only'
+          - 'deploy_all'
+        default: 'app_only'
+      versions:
+        description: >
+          **Specify Version of Apps** - provide custom Application list:  ex-"docly=v0.0.1"
+          note - if not speficifed, latest app will be deployed
+        default: ''
+        required: false
+        type: string
+      redeploy_apps: 
+        description: 'Force a deploy of app? Only applies if deploy type includes app.'
+        type: choice
+        required: false
+        options:
+          - 'true'
+          - 'false'
+        default: 'false' 
+
+jobs:
+  deploy:
+    name: CD
+    uses: FA-Switch-Platform/CICD/.github/workflows/cd.yml@v2.2
+    with:
+      azure_deployment: ${{ github.event.repository.name }} # will be different for apps using .github cd
+      repository: ${{ github.repository }} 
+      environmentName: ${{ inputs.environmentName }}
+      deploy_type: ${{ inputs.deploy_type }}
+      versions: ${{ inputs.versions }}
+      redeploy_apps: ${{ inputs.redeploy_apps }}
+      artifactName: ${{ github.event.repository.name }}
+    secrets: inherit
